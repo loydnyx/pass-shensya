@@ -310,15 +310,6 @@ export default function HomePage() {
             Key safe.
           </p>
         </div>
-
-        <a
-          href="https://www.flaticon.com/free-icons/lock"
-          title="lock icons"
-          style={{ fontSize: '10px', fontFamily: 'Times New Roman, Times, serif' }}
-        >
-          Lock icons created by Pixel perfect - Flaticon
-        </a>
-
       </footer>
     </main>
   );
