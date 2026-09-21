@@ -1,0 +1,26 @@
+# dependencies
+node_modules
+
+# next.js
+.next
+out
+
+# environment files (never commit secrets)
+.env
+.env.local
+.env*.local
+
+# vercel
+.vercel
+
+# logs, OS and tooling noise
+*.log
+.DS_Store
+*.tsbuildinfo
+
+# legacy local sqlite files
+dev.db
+dev.db-journal
+
+# editor settings
+.vscode

@@ -1,0 +1,981 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========================================================
+   PASS-SHENSYA
+   Luxury Newspaper × Modern Password Vault
+   ========================================================= */
+
+:root {
+  --paper: #f1ebdd;
+  --paper-light: #f7f3ea;
+  --paper-dark: #e8e0d0;
+
+  --ink: #171717;
+  --charcoal: #242424;
+
+  --muted: #68645d;
+  --faded: #918b81;
+
+  --accent: #761f25;
+  --accent-dark: #59171c;
+
+  --line: rgba(23, 23, 23, 0.18);
+  --line-strong: rgba(23, 23, 23, 0.55);
+
+  --font-display: "DM Serif Display", Georgia, serif;
+  --font-serif: "Source Serif 4", Georgia, serif;
+  --font-sans: "IBM Plex Sans", Arial, Helvetica, sans-serif;
+  --font-mono: "IBM Plex Mono", "Courier New", monospace;
+}
+
+/* =========================================================
+   BASE
+   ========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: var(--paper);
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+
+  background:
+    radial-gradient(
+      circle at 20% 10%,
+      rgba(255, 255, 255, 0.4),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 80% 90%,
+      rgba(0, 0, 0, 0.025),
+      transparent 35%
+    ),
+    var(--paper);
+
+  color: var(--ink);
+
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+@layer components {
+
+/* =========================================================
+   TYPOGRAPHY
+   ========================================================= */
+
+.editorial-display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+}
+
+.editorial-serif {
+  font-family: var(--font-serif);
+}
+
+.ui-text {
+  font-family: var(--font-sans);
+}
+
+.mono-text {
+  font-family: var(--font-mono);
+}
+
+.editorial-masthead {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 4.5rem);
+  line-height: 0.9;
+  letter-spacing: -0.045em;
+}
+
+.editorial-kicker {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.editorial-caption {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  line-height: 1.5;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* =========================================================
+   EDITORIAL RULES
+   ========================================================= */
+
+.editorial-rule {
+  width: 100%;
+  height: 1px;
+  background: var(--line);
+}
+
+.editorial-rule-strong {
+  width: 100%;
+  height: 1px;
+  background: var(--line-strong);
+}
+
+.editorial-double-rule {
+  border-top: 3px double var(--line-strong);
+  border-bottom: 1px solid var(--line);
+}
+
+/* =========================================================
+   PAPER SURFACES
+   ========================================================= */
+
+.paper-surface {
+  background: var(--paper-light);
+  border: 1px solid var(--line);
+}
+
+.paper-surface-dark {
+  background: var(--charcoal);
+  color: var(--paper-light);
+}
+
+.paper-card {
+  background: var(--paper-light);
+  border: 1px solid var(--line);
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.paper-card:hover {
+  border-color: var(--line-strong);
+}
+
+/* =========================================================
+   PAPER TEXTURE
+   ========================================================= */
+
+.paper-grain {
+  position: relative;
+}
+
+.paper-grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+
+  opacity: 0.055;
+
+  background-image:
+    radial-gradient(
+      rgba(0, 0, 0, 0.55) 0.5px,
+      transparent 0.5px
+    );
+
+  background-size: 5px 5px;
+
+  mix-blend-mode: multiply;
+}
+
+.halftone {
+  background-image:
+    radial-gradient(
+      rgba(23, 23, 23, 0.16) 0.65px,
+      transparent 0.65px
+    );
+
+  background-size: 6px 6px;
+}
+
+/* =========================================================
+   ARCHIVE LABELS / STAMPS
+   ========================================================= */
+
+.archive-label {
+  display: inline-flex;
+  align-items: center;
+
+  min-height: 24px;
+  padding: 0.3rem 0.55rem;
+
+  border: 1px solid var(--line-strong);
+
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-weight: 600;
+  line-height: 1;
+
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+
+  color: var(--ink);
+}
+
+.archive-label-accent {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.security-stamp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 86px;
+  min-height: 86px;
+
+  border: 1px solid var(--accent);
+
+  color: var(--accent);
+
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 600;
+
+  letter-spacing: 0.12em;
+  text-align: center;
+  text-transform: uppercase;
+
+  transform: rotate(-2deg);
+}
+
+/* =========================================================
+   INPUTS
+   ========================================================= */
+
+.editorial-label {
+  display: block;
+
+  margin-bottom: 0.45rem;
+
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 600;
+  line-height: 1.2;
+
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+
+  color: var(--muted);
+}
+
+.editorial-input {
+  width: 100%;
+  min-height: 46px;
+
+  border: 1px solid var(--line-strong);
+  border-radius: 0;
+
+  background: var(--paper-light);
+  color: var(--ink);
+
+  padding-top: 0.75rem;
+  padding-right: 1rem;
+  padding-bottom: 0.75rem;
+  padding-left: 1rem;
+
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  line-height: 1.5;
+
+  outline: none;
+
+  box-sizing: border-box;
+
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease;
+}
+
+.editorial-input::placeholder {
+  color: var(--faded);
+  opacity: 1;
+}
+
+.editorial-input:focus {
+  border-color: var(--ink);
+  background: var(--paper-light);
+
+  box-shadow: 0 0 0 1px var(--ink);
+}
+
+.editorial-input:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* =========================================================
+   INPUTS WITH ICONS
+   IMPORTANT:
+   These use !important intentionally so the icon spacing
+   cannot be overridden by the base .editorial-input padding.
+   ========================================================= */
+
+.editorial-input-with-left-icon {
+  padding-left: 3rem !important;
+}
+
+.editorial-input-with-right-icon {
+  padding-right: 3rem !important;
+}
+
+.editorial-input-with-both-icons {
+  padding-left: 3rem !important;
+  padding-right: 3rem !important;
+}
+
+/* =========================================================
+   TEXTAREA
+   ========================================================= */
+
+.editorial-textarea {
+  width: 100%;
+  min-height: 120px;
+
+  resize: vertical;
+
+  border: 1px solid var(--line-strong);
+  border-radius: 0;
+
+  background: var(--paper-light);
+  color: var(--ink);
+
+  padding: 0.8rem 1rem;
+
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  line-height: 1.5;
+
+  outline: none;
+
+  box-sizing: border-box;
+
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.editorial-textarea::placeholder {
+  color: var(--faded);
+}
+
+.editorial-textarea:focus {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 1px var(--ink);
+}
+
+/* =========================================================
+   SELECT
+   ========================================================= */
+
+.editorial-select {
+  width: 100%;
+  min-height: 46px;
+
+  appearance: none;
+
+  border: 1px solid var(--line-strong);
+  border-radius: 0;
+
+  background-color: var(--paper-light);
+  color: var(--ink);
+
+  padding: 0.75rem 2.75rem 0.75rem 1rem;
+
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+
+  outline: none;
+
+  cursor: pointer;
+
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.editorial-select:focus {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 1px var(--ink);
+}
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.editorial-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+
+  min-height: 42px;
+  padding: 0.65rem 1rem;
+
+  border: 1px solid var(--ink);
+  border-radius: 0;
+
+  background: var(--ink);
+  color: var(--paper-light);
+
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+
+  line-height: 1;
+  letter-spacing: 0.04em;
+
+  cursor: pointer;
+
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    border-color 160ms ease;
+}
+
+.editorial-button:hover {
+  background: var(--charcoal);
+}
+
+.editorial-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.editorial-button-secondary {
+  background: transparent;
+  color: var(--ink);
+}
+
+.editorial-button-secondary:hover {
+  background: var(--paper-dark);
+}
+
+.editorial-button-accent {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--paper-light);
+}
+
+.editorial-button-accent:hover {
+  background: var(--accent-dark);
+}
+
+.editorial-button-danger {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--paper-light);
+}
+
+/* =========================================================
+   LINKS
+   ========================================================= */
+
+.editorial-link {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+
+  transition:
+    color 160ms ease,
+    text-decoration-color 160ms ease;
+}
+
+.editorial-link:hover {
+  color: var(--accent);
+}
+
+/* =========================================================
+   PASSWORD DISPLAY
+   ========================================================= */
+
+.password-value {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+}
+
+.password-hidden {
+  letter-spacing: 0.14em;
+}
+
+/* =========================================================
+   CLASSES USED IN THE TSX BUT PREVIOUSLY UNDEFINED
+   ========================================================= */
+
+.rule-thin {
+  border-top: 1px solid var(--line-strong);
+}
+
+.rule-double {
+  border-top: 3px double var(--line-strong);
+  border-bottom: 1px solid var(--line-strong);
+  padding-bottom: 3px;
+}
+
+.classified-stamp {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transform: rotate(-2deg);
+}
+
+.secret-value {
+  font-family: var(--font-mono);
+  word-break: break-all;
+  user-select: all;
+}
+
+.editorial-button-primary {
+  background: var(--ink);
+  color: var(--paper-light);
+}
+
+.lock-seal-ring {
+  border: 1px dashed var(--line-strong);
+}
+}
+
+/* =========================================================
+   FOCUS
+   ========================================================= */
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--muted) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--muted);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--ink);
+}
+
+/* =========================================================
+   SELECTION
+   ========================================================= */
+
+::selection {
+  background: var(--ink);
+  color: var(--paper-light);
+}
+
+/* =========================================================
+   ANIMATIONS
+   ========================================================= */
+
+@keyframes editorial-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes editorial-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.editorial-fade-in {
+  animation: editorial-fade-in 360ms ease-out both;
+}
+
+.editorial-scale-in {
+  animation: editorial-scale-in 220ms ease-out both;
+}
+
+/* =========================================================
+   MODAL
+   ========================================================= */
+
+.editorial-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 1rem;
+
+  background: rgba(23, 23, 23, 0.48);
+
+  backdrop-filter: blur(2px);
+}
+
+.editorial-modal {
+  width: 100%;
+  max-width: 680px;
+  max-height: calc(100vh - 2rem);
+
+  overflow-y: auto;
+
+  background: var(--paper-light);
+  color: var(--ink);
+
+  border: 1px solid var(--line-strong);
+
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.2);
+
+  animation: editorial-scale-in 180ms ease-out both;
+}
+
+@layer components {
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 768px) {
+  .editorial-masthead {
+    font-size: clamp(2rem, 12vw, 3.5rem);
+  }
+
+  .editorial-input {
+    min-height: 44px;
+    font-size: 0.875rem;
+  }
+
+  .editorial-button {
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 15px;
+  }
+
+  .editorial-kicker {
+    font-size: 0.58rem;
+  }
+
+  .editorial-caption {
+    font-size: 0.56rem;
+  }
+
+  .security-stamp {
+    min-width: 72px;
+    min-height: 72px;
+    font-size: 0.52rem;
+  }
+}
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* =========================================================
+   ARCHIVE SCROLL AREA
+   Keeps the vault contained when many entries exist.
+   ========================================================= */
+
+.archive-scroll-area {
+  max-height: 620px;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding-right: 0.35rem;
+  padding-bottom: 0.75rem;
+
+  scrollbar-width: thin;
+  scrollbar-color: var(--muted) transparent;
+}
+
+.archive-scroll-area::-webkit-scrollbar {
+  width: 7px;
+}
+
+.archive-scroll-area::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.archive-scroll-area::-webkit-scrollbar-thumb {
+  background: var(--muted);
+}
+
+.archive-scroll-area::-webkit-scrollbar-thumb:hover {
+  background: var(--ink);
+}
+
+@media (max-width: 768px) {
+  .archive-scroll-area {
+    max-height: 560px;
+  }
+}
+
+/* =========================================================
+   APP ANIMATIONS
+   Moved out of styled-jsx (VaultApp.tsx) so Server Components
+   such as the home page can use them without importing
+   styled-jsx. Shared by the home page and the dashboard.
+   Kept OUTSIDE @layer on purpose: these are motion rules and
+   should win over Tailwind's transition utilities.
+   ========================================================= */
+
+@keyframes ps-page-enter {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ps-rule-reveal {
+  from { opacity: 0; transform: scaleX(0); transform-origin: left; }
+  to { opacity: 1; transform: scaleX(1); transform-origin: left; }
+}
+
+@keyframes ps-record-enter {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ps-modal-backdrop {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes ps-modal-panel {
+  from { opacity: 0; transform: translateY(18px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes ps-lock-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-3px) rotate(-1.5deg); }
+  50% { transform: translateY(0) rotate(0deg); }
+  75% { transform: translateY(3px) rotate(1.5deg); }
+}
+
+@keyframes ps-lock-ring {
+  0% { transform: scale(.94) rotate(0deg); opacity: .45; }
+  50% { transform: scale(1.04) rotate(180deg); opacity: .8; }
+  100% { transform: scale(.94) rotate(360deg); opacity: .45; }
+}
+
+@keyframes ps-lock-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(23,23,23,.08); }
+  50% { box-shadow: 0 0 0 6px rgba(23,23,23,.025); }
+}
+
+.ps-page-enter {
+  animation: ps-page-enter 520ms cubic-bezier(.22,1,.36,1) backwards;
+}
+
+.ps-masthead-reveal {
+  animation: ps-page-enter 620ms cubic-bezier(.22,1,.36,1) 80ms backwards;
+}
+
+.ps-rule-reveal {
+  animation: ps-rule-reveal 700ms cubic-bezier(.22,1,.36,1) 180ms backwards;
+}
+
+.ps-record-enter {
+  animation: ps-record-enter 420ms cubic-bezier(.22,1,.36,1) backwards;
+  animation-delay: var(--ps-delay, 0ms);
+}
+
+.ps-vault-card {
+  transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+
+.ps-vault-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(23,23,23,.08);
+}
+
+.ps-modal-backdrop {
+  animation: ps-modal-backdrop 180ms ease-out both;
+}
+
+.ps-modal-panel {
+  animation: ps-modal-panel 260ms cubic-bezier(.22,1,.36,1) both;
+}
+
+.ps-lock-float {
+  animation: ps-lock-float 4.2s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.ps-lock-ring {
+  animation: ps-lock-ring 8s linear infinite;
+  transform-origin: center;
+}
+
+.ps-lock-core {
+  animation: ps-lock-pulse 3.2s ease-in-out infinite;
+}
+
+.ps-icon-action {
+  transition: transform 160ms ease, color 160ms ease, background-color 160ms ease;
+}
+
+.ps-icon-action:hover {
+  transform: translateY(-1px);
+}
+
+.ps-icon-action:active {
+  transform: translateY(0) scale(.94);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ps-page-enter,
+  .ps-masthead-reveal,
+  .ps-rule-reveal,
+  .ps-record-enter,
+  .ps-modal-backdrop,
+  .ps-modal-panel,
+  .ps-lock-float,
+  .ps-lock-ring,
+  .ps-lock-core {
+    animation: none !important;
+  }
+
+  .ps-vault-card,
+  .ps-icon-action {
+    transition: none !important;
+  }
+
+  .ps-vault-card:hover,
+  .ps-icon-action:hover,
+  .ps-icon-action:active {
+    transform: none !important;
+  }
+}
+
+/* =========================================================
+   LOCK SEAL AS THE LETTER "O" (headlines)
+   The visible circle (.ps-o-seal-core) IS the letter: it is exactly
+   cap-height tall and sits on the text baseline. The dashed ring is
+   only a halo drawn OUTSIDE that box, so it never affects alignment.
+   Sized in em so it follows the heading at every breakpoint.
+   ========================================================= */
+
+.ps-o-seal {
+  position: relative;
+
+  /* inline-block with only absolutely-positioned children: its baseline is
+     the bottom edge, so it sits ON the text baseline like a capital letter. */
+  display: inline-block;
+
+  width: 0.72em;
+  height: 0.72em;
+  margin: 0 0.03em 0 0;
+
+  vertical-align: -0.01em;
+}
+
+/* Halo: outside the letter box, purely decorative. */
+.ps-o-seal .lock-seal-ring {
+  inset: -10%;
+  border-radius: 50%;
+}
+
+.ps-o-seal-core {
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1.5px solid var(--line-strong);
+  border-radius: 50%;
+
+  background: var(--paper-light);
+}
+
+/* As a letter it should rest ON the baseline and only lift from it,
+   never dip below or drift sideways. */
+@keyframes ps-o-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-0.03em);
+  }
+}
+
+.ps-o-seal.ps-lock-float {
+  animation: ps-o-float 4.2s ease-in-out infinite;
+}

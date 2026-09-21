@@ -1,0 +1,54 @@
+// Pass-Shensya data model — Postgres (Supabase). V2 crypto architecture:
+// each user's vault key is random (never derived from the password) and
+// kept only as two wrapped copies — see src/lib/crypto.ts.
+//
+// DATABASE_URL: the pooled connection (port 6543) — used at runtime by the app.
+// DIRECT_URL: the direct connection (port 5432) — used only for migrations/db push,
+// since Supabase's pooler doesn't support the prepared statements Prisma needs for those.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  displayName  String
+  passwordHash String   // bcrypt hash, used only to verify login — never used for encryption
+
+  // The vault key is a random 256-bit key, generated once at signup. It is
+  // never stored in the clear — only "wrapped" (AES-256-GCM encrypted)
+  // copies of it are kept, each unlockable by a different secret:
+  vaultSalt       String // scrypt salt used to turn the master password into a wrapping key
+  vaultKeyWrapped String // the vault key, wrapped with a key derived from the master password
+
+  recoverySalt       String // scrypt salt used to turn the recovery key into a wrapping key
+  recoveryKeyWrapped String // the SAME vault key, wrapped with a key derived from the recovery key
+
+  createdAt    DateTime @default(now())
+  entries      VaultEntry[]
+}
+
+model VaultEntry {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label          String   // e.g. "Facebook", "Gmail" — stored in plain text so entries are searchable/sortable
+  category       String   @default("General") // e.g. Social, Banking, Work, Email
+  websiteUrl     String?
+  usernameCipher String   // "v2:<base64(iv||tag||ciphertext)>" — AES-256-GCM, AAD-bound to user+entry+field
+  passwordCipher String   // same format
+  notesCipher    String?  // same format
+  favorite       Boolean  @default(false)
+  cryptoVersion  Int      @default(2) // which ciphertext format these fields use — lets future re-encryption target old rows
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([userId])
+}

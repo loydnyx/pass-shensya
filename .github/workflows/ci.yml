@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # postinstall runs `prisma generate`
+      - run: npm ci
+
+      - name: Type-check
+        run: npm run typecheck
+
+      - name: Tests
+        run: npm test
+
+      # The build needs no database and no real secrets: pages are rendered per
+      # request. These are placeholders so nothing reads a missing variable.
+      - name: Build
+        run: npm run build
+        env:
+          DATABASE_URL: postgresql://user:password@localhost:5432/postgres
+          DIRECT_URL: postgresql://user:password@localhost:5432/postgres
+          SESSION_SECRET: "0000000000000000000000000000000000000000000000000000000000000000"
+          NEXT_PUBLIC_SITE_URL: https://example.com
