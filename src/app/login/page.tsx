@@ -7,6 +7,8 @@ import { ArrowRight, LockKeyhole } from "lucide-react";
 import { AuthNotice, AuthPanel, AuthShell } from "@/components/AuthShell";
 import LetterSeal from "@/components/LetterSeal";
 import PasswordField from "@/components/PasswordField";
+import RateLimitNotice from "@/components/RateLimitNotice";
+import { useCountdown } from "@/lib/useCountdown";
 
 export default function LoginPage() {
   // /login?locked=1 is where the dashboard's auto-lock sends people.
@@ -16,6 +18,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const lockout = useCountdown();
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -28,6 +31,9 @@ export default function LoginPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
+
+      // 429: show a live countdown from the server's Retry-After time.
+      if (lockout.startFromResponse(response)) return;
 
       const data = await response.json();
 
@@ -121,11 +127,19 @@ export default function LoginPage() {
                 placeholder="Enter your master password"
               />
 
-              {wasLocked && !error && (
+              {wasLocked && !error && !lockout.active && (
                 <AuthNotice
                   tone="info"
                   title="Vault locked"
                   message="You were signed out after a period of inactivity. Sign in again to continue."
+                />
+              )}
+
+              {lockout.active && (
+                <RateLimitNotice
+                  lead="For your protection, sign-in is paused. You can try again in"
+                  secondsLeft={lockout.secondsLeft}
+                  totalSeconds={lockout.total}
                 />
               )}
 
@@ -134,12 +148,18 @@ export default function LoginPage() {
               <div className="pt-2">
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || lockout.active}
                   className="editorial-button editorial-button-primary w-full disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  {loading ? "Opening archive..." : "Open my vault"}
+                  {lockout.active
+                    ? "Sign-in paused"
+                    : loading
+                      ? "Opening archive..."
+                      : "Open my vault"}
 
-                  {!loading && <ArrowRight size={15} strokeWidth={1.8} />}
+                  {!loading && !lockout.active && (
+                    <ArrowRight size={15} strokeWidth={1.8} />
+                  )}
                 </button>
               </div>
             </form>

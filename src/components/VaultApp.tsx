@@ -50,6 +50,8 @@ import {
   type HealthFlag,
 } from "@/lib/passwordHealth";
 import { useIdleLock } from "@/lib/useIdleLock";
+import { useCountdown } from "@/lib/useCountdown";
+import RateLimitNotice from "./RateLimitNotice";
 
 /* -------------------------------------------------------------------------- */
 /* TYPES                                                                      */
@@ -1878,6 +1880,7 @@ function RecoveryKeyModal({ onClose }: { onClose: () => void }) {
   const [understood, setUnderstood] = useState(false);
   const [saved, setSaved] = useState(false);
   const [copied, setCopied] = useState(false);
+  const lockout = useCountdown();
 
   const handleGenerate = async (event: FormEvent) => {
     event.preventDefault();
@@ -1896,6 +1899,9 @@ function RecoveryKeyModal({ onClose }: { onClose: () => void }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password }),
       });
+
+      // 429: show a live countdown from the server's Retry-After time.
+      if (lockout.startFromResponse(response)) return;
 
       const data: { recoveryKey?: string; error?: string } | null =
         await response.json().catch(() => null);
@@ -2140,6 +2146,16 @@ function RecoveryKeyModal({ onClose }: { onClose: () => void }) {
             </div>
           </div>
 
+          {lockout.active && (
+            <div className="mt-5">
+              <RateLimitNotice
+                lead="Too many password attempts. You can try again in"
+                secondsLeft={lockout.secondsLeft}
+                totalSeconds={lockout.total}
+              />
+            </div>
+          )}
+
           {error && <FormError message={error} />}
 
           <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
@@ -2155,7 +2171,7 @@ function RecoveryKeyModal({ onClose }: { onClose: () => void }) {
             <button
               type="submit"
               className="editorial-button editorial-button-primary"
-              disabled={working}
+              disabled={working || lockout.active}
             >
               {working ? (
                 <>
@@ -2184,6 +2200,7 @@ function DeleteAccountModal({ onClose }: { onClose: () => void }) {
   const [password, setPassword] = useState("");
   const [confirmation, setConfirmation] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const lockout = useCountdown();
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState("");
 
@@ -2209,6 +2226,9 @@ function DeleteAccountModal({ onClose }: { onClose: () => void }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password, confirmation }),
       });
+
+      // 429: show a live countdown from the server's Retry-After time.
+      if (lockout.startFromResponse(response)) return;
 
       const data = await response.json().catch(() => null);
 
@@ -2300,6 +2320,16 @@ function DeleteAccountModal({ onClose }: { onClose: () => void }) {
           </div>
         </div>
 
+        {lockout.active && (
+          <div className="mt-5">
+            <RateLimitNotice
+              lead="Too many password attempts. You can try again in"
+              secondsLeft={lockout.secondsLeft}
+              totalSeconds={lockout.total}
+            />
+          </div>
+        )}
+
         {error && <FormError message={error} />}
 
         <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
@@ -2315,7 +2345,7 @@ function DeleteAccountModal({ onClose }: { onClose: () => void }) {
           <button
             type="submit"
             className="editorial-button editorial-button-danger"
-            disabled={deleting}
+            disabled={deleting || lockout.active}
           >
             {deleting ? (
               <>

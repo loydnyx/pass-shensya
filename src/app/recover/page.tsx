@@ -6,6 +6,8 @@ import { ArrowRight, KeyRound, ShieldQuestion } from "lucide-react";
 import { AuthNotice, AuthPanel, AuthShell } from "@/components/AuthShell";
 import PasswordField from "@/components/PasswordField";
 import PasswordStrengthMeter from "@/components/PasswordStrengthMeter";
+import RateLimitNotice from "@/components/RateLimitNotice";
+import { useCountdown } from "@/lib/useCountdown";
 import RecoveryKeyPanel from "@/components/RecoveryKeyPanel";
 
 export default function RecoverPage() {
@@ -17,6 +19,7 @@ export default function RecoverPage() {
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const lockout = useCountdown();
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -29,6 +32,9 @@ export default function RecoverPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, recoveryKey, newPassword }),
       });
+
+      // 429: show a live countdown from the server's Retry-After time.
+      if (lockout.startFromResponse(response)) return;
 
       const data = await response.json();
 
@@ -208,16 +214,28 @@ export default function RecoverPage() {
                 </PasswordField>
               </div>
 
+              {lockout.active && (
+                <RateLimitNotice
+                  lead="For your protection, recovery is paused. You can try again in"
+                  secondsLeft={lockout.secondsLeft}
+                  totalSeconds={lockout.total}
+                />
+              )}
+
               {error && <AuthNotice title="Recovery Notice" message={error} />}
 
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || lockout.active}
                 className="editorial-button editorial-button-primary w-full disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {loading ? "Restoring archive..." : "Restore access"}
+                {lockout.active
+                  ? "Recovery paused"
+                  : loading
+                    ? "Restoring archive..."
+                    : "Restore access"}
 
-                {!loading && <ArrowRight size={15} />}
+                {!loading && !lockout.active && <ArrowRight size={15} />}
               </button>
             </form>
 
