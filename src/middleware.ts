@@ -27,7 +27,7 @@ export function middleware(request: NextRequest) {
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
-    "frame-ancestors 'none'",
+    "frame-ancestors 'self' https://loydnyx.vercel.app http://127.0.0.1:5500",
     ...(isDev ? [] : ["upgrade-insecure-requests"]),
   ].join("; ");
 
