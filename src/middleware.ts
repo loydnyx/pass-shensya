@@ -1,53 +1,81 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-/**
- * Content-Security-Policy with a fresh nonce per request.
- *
- * Next.js reads the nonce from the CSP header on the *request* and stamps it
- * onto its own inline and chunk <script> tags, so no 'unsafe-inline' is
- * needed for scripts. Pages must therefore be rendered per request (see
- * `dynamic = "force-dynamic"` in app/layout.tsx): a page baked at build time
- * could not carry a nonce.
- *
- * style-src keeps 'unsafe-inline' because React inline `style={{...}}`
- * attributes (animation delays, the strength-meter bar) cannot carry nonces.
- * Google Fonts is allowed for the stylesheet + font files used in globals.css.
- */
 export function middleware(request: NextRequest) {
+  // Create a new nonce for every request
   const nonce = btoa(crypto.randomUUID());
   const isDev = process.env.NODE_ENV === "development";
 
   const csp = [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${isDev ? " 'unsafe-eval'" : ""}`,
+
+    // Allow scripts with the generated nonce
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${isDev ? " 'unsafe-eval'" : ""
+    }`,
+
+    // Allow inline styles and Google Fonts
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+
+    // Allow Google Fonts
     "font-src 'self' https://fonts.gstatic.com data:",
+
+    // Allow images from the app, data, and blob URLs
     "img-src 'self' data: blob:",
+
+    // Allow API and WebSocket connections in development
     `connect-src 'self'${isDev ? " ws: wss:" : ""}`,
+
+    // Block plugins
     "object-src 'none'",
+
+    // Block base tag changes
     "base-uri 'self'",
+
+    // Only allow forms on this site
     "form-action 'self'",
-    "frame-ancestors 'self' https://loydnyx.vercel.app http://127.0.0.1:5500",
+
+    // Allow the portfolio to display this app in an iframe
+    "frame-ancestors 'self' https://loydnyx.vercel.app http://127.0.0.1:5500 http://localhost:5500",
+
+    // Force HTTPS in production
     ...(isDev ? [] : ["upgrade-insecure-requests"]),
   ].join("; ");
 
+  // Pass the nonce and CSP to Next.js
   const requestHeaders = new Headers(request.headers);
+
   requestHeaders.set("x-nonce", nonce);
   requestHeaders.set("Content-Security-Policy", csp);
 
-  const response = NextResponse.next({ request: { headers: requestHeaders } });
+  const response = NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
+
+  // Send the CSP to the browser
   response.headers.set("Content-Security-Policy", csp);
+
   return response;
 }
 
 export const config = {
   matcher: [
     {
-      // Pages only: skip API routes, static assets and metadata files.
-      source: "/((?!api|_next/static|_next/image|favicon.ico|icon.svg|robots.txt|sitemap.xml).*)",
+      // Apply middleware to pages only
+      source:
+        "/((?!api|_next/static|_next/image|favicon.ico|icon.svg|robots.txt|sitemap.xml).*)",
+
+      // Skip prefetch requests
       missing: [
-        { type: "header", key: "next-router-prefetch" },
-        { type: "header", key: "purpose", value: "prefetch" },
+        {
+          type: "header",
+          key: "next-router-prefetch",
+        },
+        {
+          type: "header",
+          key: "purpose",
+          value: "prefetch",
+        },
       ],
     },
   ],
