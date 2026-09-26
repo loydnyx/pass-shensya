@@ -23,14 +23,29 @@ describe("Content-Security-Policy middleware", () => {
     expect(scriptSrc).not.toContain("'unsafe-eval'");
   });
 
-  it("blocks framing, plugins, base-tag hijacking and off-site connections", () => {
+  it("blocks plugins, base-tag hijacking and off-site connections", () => {
     const csp = run().headers.get("content-security-policy") ?? "";
 
-    expect(csp).toContain("frame-ancestors 'none'");
     expect(csp).toContain("object-src 'none'");
     expect(csp).toContain("base-uri 'self'");
     expect(csp).toContain("form-action 'self'");
     expect(csp).toContain("connect-src 'self'");
+  });
+
+  it("only allows framing by this site itself and the named portfolio origin", () => {
+    // Deliberately scoped, not a wildcard: the portfolio can embed this app,
+    // but no other site can. If this ever needs to change, update the
+    // allowed origin list here in the same place as in src/middleware.ts.
+    const csp = run().headers.get("content-security-policy") ?? "";
+    const frameAncestors = csp
+      .split(";")
+      .map((directive) => directive.trim())
+      .find((directive) => directive.startsWith("frame-ancestors")) ?? "";
+
+    expect(frameAncestors).not.toBe(""); // the directive must be present at all
+    expect(frameAncestors).not.toContain("*"); // never a wildcard
+    expect(frameAncestors).toContain("'self'");
+    expect(frameAncestors).toContain("https://loydnyx.vercel.app");
   });
 
   it("forwards the same nonce to the app on the request", () => {
